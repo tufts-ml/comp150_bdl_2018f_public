@@ -1,0 +1,14 @@
+name: bdl_basic_env
+
+dependencies:
+  - python=2.7
+  - jupyter=1.0
+  - dill=0.2
+  - numpy=1.14
+  - scipy=1.0
+  - pandas=0.22
+  - scikit-learn=0.19
+  - matplotlib=2.1
+  - seaborn=0.9
+  - pip:
+    - git+https://github.com/hips/autograd.git#egg=autograd
