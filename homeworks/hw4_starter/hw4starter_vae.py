@@ -117,7 +117,7 @@ class VariationalAutoencoder(nn.Module):
             # see Appendix B from VAE paper
             # https://arxiv.org/pdf/1312.6114.pdf
             kl = 0.0 # <- TODO fix me
-            total_loss += sample_bce_loss - kl
+            total_loss += sample_bce_loss + kl
         return total_loss / float(n_mc_samples), sample_xproba_ND
 
 
