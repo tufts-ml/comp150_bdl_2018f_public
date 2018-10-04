@@ -116,12 +116,7 @@ class VariationalAutoencoder(nn.Module):
             # KL divergence from q(mu, sigma) to prior (std normal)
             # see Appendix B from VAE paper
             # https://arxiv.org/pdf/1312.6114.pdf
-            # KL = - 0.5 * sum(1 + log(sigma^2) - mu^2 - sigma^2)
-            kl = - 0.5 * torch.sum(
-                1.0
-                + torch.log(self.q_sigma.pow(2))
-                - mu_NC.pow(2)
-                - self.q_sigma.pow(2))
+            kl = 0.0 # <- TODO fix me
             total_loss += sample_bce_loss - kl
         return total_loss / float(n_mc_samples), sample_xproba_ND
 
