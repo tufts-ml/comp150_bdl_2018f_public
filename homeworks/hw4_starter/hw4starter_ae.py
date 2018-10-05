@@ -10,7 +10,7 @@ from torch.nn import functional as F
 from torchvision import datasets, transforms
 from torchvision.utils import save_image
 
-from hw4_vae import VariationalAutoencoder, eval_model_on_data
+from hw4starter_vae import VariationalAutoencoder, eval_model_on_data
 
 class Autoencoder(nn.Module):
     def __init__(
