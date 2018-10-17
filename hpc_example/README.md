@@ -142,10 +142,11 @@ We'll need two scripts:
 * one to loop over all settings [launch_experiments.sh](https://github.com/tufts-ml/comp150_bdl_2018f_public/blob/master/hpc_example/launch_experiments.sh)
 * one to do the work at each setting [do_experiment.slurm](https://github.com/tufts-ml/comp150_bdl_2018f_public/blob/master/hpc_example/do_experiment.slurm)
 
+
 Our desired end behavior is to just call the "launch_experiments.sh" script with a desired action:
 ```
 $ bash launch_experiments.sh list      ## Just list out the settings we'll explore
-$ bash launch_experiments.sh run_here  ## Actually run the experiment here in this terminal
+$ bash launch_experiments.sh run_here  ## Run each setting one-at-a-time here in this terminal (useful for debugging)
 $ bash launch_experiments.sh submit    ## Send the work to the HPC cluster to be scheduled, via 'sbatch'
 ```
 
