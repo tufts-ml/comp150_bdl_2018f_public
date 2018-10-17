@@ -14,9 +14,9 @@ Recall the Usage of this script:
 ```
 $ python hw4_ae.py --help
   --help            show this help message and exit
-  --n_epochs N_EPOCHS   number of epochs (default: 10)
+  --n_epochs N_EPOCHS   number of epochs (default: 2)
   --batch_size BATCH_SIZE
-                        batch size (default: 1024)
+                        batch size (default: 100)
   --lr LR               Learning rate for grad. descent (default: 0.001)
   --hidden_layer_sizes HIDDEN_LAYER_SIZES
                         Comma-separated list of size values (default: "32")
