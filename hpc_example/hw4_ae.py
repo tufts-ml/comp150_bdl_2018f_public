@@ -10,7 +10,7 @@ from torch.nn import functional as F
 from torchvision import datasets, transforms
 from torchvision.utils import save_image
 
-from hw4starter_vae import VariationalAutoencoder, eval_model_on_data
+from hw4_vae import VariationalAutoencoder, eval_model_on_data
 
 class Autoencoder(nn.Module):
     def __init__(
@@ -82,11 +82,11 @@ class Autoencoder(nn.Module):
         xproba_ND : tensor like xbin_ND, values within unit interval (0,1)
             Predicted probabilities after encoding then decoding input xbin_ND
         '''
-        ## TODO write code to compute two things:
+        ## DONE write code to compute two things:
         # * the reconstruction 'xproba_ND' of the input binary array xbin_ND
         # * the binary cross entropy loss under this reconstruction
-        xproba_ND = None # <-- TODO fix me
-        bce_loss = None  # <-- TODO fix me
+        xproba_ND = self.forward(xbin_ND)
+        bce_loss = F.binary_cross_entropy(xproba_ND, xbin_ND)
         return bce_loss, xproba_ND
 
 
@@ -132,11 +132,11 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Autoencoder MNIST Example')
     parser.add_argument(
-        '--n_epochs', type=int, default=10,
-        help="number of epochs (default: 10)")
+        '--n_epochs', type=int, default=2,
+        help="number of epochs (default: 2)")
     parser.add_argument(
-        '--batch_size', type=int, default=1024,
-        help='batch size (default: 1024)')
+        '--batch_size', type=int, default=100,
+        help='batch size (default: 100)')
     parser.add_argument(
         '--lr', type=float, default=0.001,
         help='Learning rate for grad. descent (default: 0.001)')

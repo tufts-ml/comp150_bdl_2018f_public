@@ -10,14 +10,24 @@
 # Load the right conda environment
 source activate bdl_pytorch_readonly
 
-# Pass along all ENV variables as arguments to my Python script
+# If some ENV variables are not defined, set them to defaults
+if [[ -z $lr ]]; then
+    lr=0.001;
+fi
+if [[ -z $hidden_layer_sizes ]]; then
+    hidden_layer_sizes=32;
+fi
+if [[ -z $n_epochs ]]; then
+    n_epochs=2;
+fi
+if [[ -z $filename_prefix ]]; then
+    filename_prefix='mydemo'
+fi
 
+# Pass along all ENV variables as arguments to my Python script
 python hw4_ae.py \
     --lr $lr \
-    --batch_size $batch_size \
-    --q_sigma $q_sigma \
     --hidden_layer_sizes $hidden_layer_sizes \
-    --n_mc_samples $n_mc_samples \
     --filename_prefix $filename_prefix \
     --n_epochs $n_epochs \
 
