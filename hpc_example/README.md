@@ -50,7 +50,7 @@ The main body should look familiar:
 We can ignore the header for now. Try it out! It's just like any shell script:
 
 ```
-$ bash do_experiment.slurm lr=0.001 hidden_layer_sizses=032
+$ bash do_experiment.slurm lr=0.001 hidden_layer_sizes=032
 ```
 
 EXPECTED OUT:
@@ -68,27 +68,124 @@ Total images 10000. Total on pixels: 1052359. Frac pixels on: 0.134
 ...
 ```
 
+Great! But what's the big deal? This is a wrapper for our hw4_ae.py script that *can be understood* by the SLURM job scheduling system.
 
-### Step 2: Create two scripts
+Look at the header:
+```
+#!/usr/bin/env bash
+#SBATCH -n 1                # Number of cores
+#SBATCH -t 0-05:00          # Runtime in D-HH:MM
+#SBATCH -p batch            # Partition to submit to
+#SBATCH --mem-per-cpu 2000  # Memory (in MB) per cpu
+#SBATCH -o log_%j.out       # Write stdout to file named log_JOBID.out in current dir
+#SBATCH -e log_%j.err       # Write stderr to file named log_JOBID.err in current dir
+#SBATCH --export=ALL        # Pass any exported env vars to this script and its children
+
+```
+All this says that that when we request a job, we want 1 core, to run for at most 5 hours, and use at most 2GB (2000 MB) of RAM.
+
+
+### Step 3: Try out a single job submission via 'sbatch'
+
+Once we have our do_experiment.slurm script, we can **submit** it to the job scheduler via this command:
+
+```
+$ lr=0.01 hidden_layer_sizes=32 sbatch < do_experiment.slurm
+```
+Note: the env var arguments need to go FIRST when calling sbatch.
+
+EXPECTED OUTPUT:
+
+```
+Submitted batch job 34740124
+```
+Remember that number (in this case 34740124). This is the JOBID. 
+
+OK, the job has been submitted. You can check on it with the command:
+```
+$ squeue -u TUFTS_USERNAME
+```
+EXPECTED OUTPUT:
+```
+             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)
+          34740124     batch   sbatch mhughe02  R       1:24      1 m3n46
+          34740078 interacti     bash mhughe02  R    1:10:58      1 alpha001
+```
+If you see status of 'R' and a nodelist that looks like 'm3n46', then congrats! Your job is running!
+
+You might alternatively see a status like 'PENDING' if the queue is very busy. Be patient!
+
+#### How can I monitor my job while it runs?
+
+You can use the `squeue -u TUFTS_USERNAME` call to check on all your jobs. When they are done, they will no longer appear in that list.
+
+You can also look at the log_JOBID.out and log_JOBID.err log files, which are capturing the stdout and stderr of your jobs!
+
+```
+$ cat log_34740124.out
+Saving with prefix: mydemo
+==== evaluation after epoch 0
+Total images 60000. Total on pixels: 6221431. Frac pixels on: 0.132
+  epoch   0  train loss 0.701  bce 0.701  l1 0.502
+Total images 10000. Total on pixels: 1052359. Frac pixels on: 0.134
+  epoch   0  test  loss 0.701  bce 0.701  l1 0.502
+====  done with eval at epoch 0
+  epoch   1 | frac_seen 0.100 | avg loss 2.989e-03 | batch loss  2.405e-03 | batch l1  0.159
+  epoch   1 | frac_seen 0.200 | avg loss 2.672e-03 | batch loss  2.254e-03 | batch l1  0.147
+...
+```
+
+### Step 3: How to launch many jobs at once
 
 We'll need two scripts:
-* one to loop over all settings (launch_experiment.sh) 
+* one to loop over all settings (launch_experiments.sh) 
 * one to do the work at each setting (do_experiment.slurm)
 
-Our desired end behavior is to just call the "launch_experiment.sh" script with a desired action:
+Our desired end behavior is to just call the "launch_experiments.sh" script with a desired action:
 ```
-$ bash launch_experiment.sh list      ## Just list out the settings we'll explore
-$ bash launch_experiment.sh run_here  ## Actually run the experiment here in this terminal
-$ bash launch_experiment.sh submit    ## Send the work to the HPC cluster to be scheduled, via 'sbatch'
-
+$ bash launch_experiments.sh list      ## Just list out the settings we'll explore
+$ bash launch_experiments.sh run_here  ## Actually run the experiment here in this terminal
+$ bash launch_experiments.sh submit    ## Send the work to the HPC cluster to be scheduled, via 'sbatch'
 ```
 
 As a test, please try the first command at your terminal. Don't try the others just yet.
 
+```
+$ bash launch_experiments.sh
+lr=0.001  hidden_layer_sizes=032
+lr=0.001  hidden_layer_sizes=128
+lr=0.001  hidden_layer_sizes=512
+lr=0.010  hidden_layer_sizes=032
+lr=0.010  hidden_layer_sizes=128
+lr=0.010  hidden_layer_sizes=512
+```
+
+Great! It's listing out all the settings we want to experiment with.
+
 If you peek at launch_experiment.sh, you'll see that we:
 * loop over all settings of the variables
-* at each one call do_experiment.sh
+* at each one call do_experiment.sh 
 
-Note that we are using Environment Variables to store and pass information between the two scripts.
+Note that we are using [Environment Variables](https://www.digitalocean.com/community/tutorials/how-to-read-and-set-environmental-and-shell-variables-on-a-linux-vps) to store and pass information between the two scripts.
 
+There's a simple IF statement that controls whether we call bash and run locally (action='run_here') or call sbatch and let the grid do the work (action='submit').
 
+OK, so let's try it! 
+
+```
+$ bash launch_experiments.sh submit
+lr=0.001  hidden_layer_sizes=032
+Submitted batch job 34740131
+lr=0.001  hidden_layer_sizes=128
+Submitted batch job 34740132
+lr=0.001  hidden_layer_sizes=512
+Submitted batch job 34740133
+lr=0.010  hidden_layer_sizes=032
+Submitted batch job 34740134
+lr=0.010  hidden_layer_sizes=128
+Submitted batch job 34740135
+lr=0.010  hidden_layer_sizes=512
+Submitted batch job 34740136
+```
+
+Tada! You've submitted your first set of batch jobs!
