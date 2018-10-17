@@ -8,7 +8,7 @@ We're interested in exploring several settings:
 * learning rate (lr) of 0.010 and 0.001
 * number of hidden units of 032, 128, and 512
 
-Suppose we've got a script that can train an AE under different settings: `hw4_ae.py`
+Suppose we've got a script that can train an AE under different settings: [`hw4_ae.py`](https://github.com/tufts-ml/comp150_bdl_2018f_public/blob/master/hpc_example/hw4_ae.py)
 
 Recall the Usage of this script:
 ```
@@ -40,7 +40,9 @@ But this is boring! Let's use the cluster to run all 6 jobs (2 lr settings, 3 ar
 
 ### Step 2: Create a "do_experiment.slurm" script to perform our work
 
-Take a look at do_experiment.slurm. You'll see it's like a standard shell script, but with a weird header (lines that start with '#')
+Take a look at [do_experiment.slurm](https://github.com/tufts-ml/comp150_bdl_2018f_public/blob/master/hpc_example/do_experiment.slurm)
+
+You'll see it's like a standard shell script, but with a weird header (lines that start with '#')
 
 The main body should look familiar:
 * load the conda environment
@@ -95,7 +97,6 @@ $ lr=0.01 hidden_layer_sizes=32 sbatch < do_experiment.slurm
 Note: the env var arguments need to go FIRST when calling sbatch.
 
 EXPECTED OUTPUT:
-
 ```
 Submitted batch job 34740124
 ```
@@ -138,8 +139,8 @@ Total images 10000. Total on pixels: 1052359. Frac pixels on: 0.134
 ### Step 3: How to launch many jobs at once
 
 We'll need two scripts:
-* one to loop over all settings (launch_experiments.sh) 
-* one to do the work at each setting (do_experiment.slurm)
+* one to loop over all settings [launch_experiments.sh](https://github.com/tufts-ml/comp150_bdl_2018f_public/blob/master/hpc_example/launch_experiments.sh)
+* one to do the work at each setting [do_experiment.slurm](https://github.com/tufts-ml/comp150_bdl_2018f_public/blob/master/hpc_example/do_experiment.slurm)
 
 Our desired end behavior is to just call the "launch_experiments.sh" script with a desired action:
 ```
